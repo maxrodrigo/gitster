@@ -1,9 +1,25 @@
 # vim:et sts=2 sw=2 ft=zsh
 #
-# Gitster theme
-# https://github.com/shashankmehta/dotfiles/blob/master/thesetup/zsh/.oh-my-zsh/custom/themes/gitster.zsh-theme
-#
-# Requires the `git-info` zmodule to be included in the .zimrc file.
+# Gitster theme without dependencies
+
+setopt nopromptbang prompt{cr,percent,sp,subst}
+
+autoload -Uz vcs_info
+
+zstyle ':vcs_info:*' enable git cvs svn hg
+zstyle ':vcs_info:*' check-for-changes true
+
+zstyle ':vcs_info:*' stagedstr '%F{green}●%f '
+zstyle ':vcs_info:*' unstagedstr '%F{red}●%f '
+zstyle ':vcs_info:git*' formats '%F{2}%b%F{3} %F{1}%m%u%c'
+
+precmd() { vcs_info }
+
+vcs_info_wrapper() {
+  if [ -n "$vcs_info_msg_0_" ]; then
+    echo "${vcs_info_msg_0_}"
+  fi
+}
 
 _prompt_gitster_pwd() {
   local git_root current_dir
@@ -15,19 +31,5 @@ _prompt_gitster_pwd() {
   print -n "%F{white}${current_dir}"
 }
 
-setopt nopromptbang prompt{cr,percent,sp,subst}
-
-typeset -gA git_info
-if (( ${+functions[git-info]} )); then
-  zstyle ':zim:git-info:branch' format '%b'
-  zstyle ':zim:git-info:commit' format '%c'
-  zstyle ':zim:git-info:clean' format '%F{green}✓'
-  zstyle ':zim:git-info:dirty' format '%F{yellow}✗'
-  zstyle ':zim:git-info:keys' format \
-      'prompt' ' %F{cyan}%b%c %C%D'
-
-  autoload -Uz add-zsh-hook && add-zsh-hook precmd git-info
-fi
-
-PS1='%(?:%F{green}:%F{red})➜ $(_prompt_gitster_pwd)${(e)git_info[prompt]}%f '
+PS1='%(?:%F{green}:%F{red})➜ $(_prompt_gitster_pwd) $(vcs_info_wrapper)%f'
 unset RPS1
