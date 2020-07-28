@@ -11,7 +11,8 @@ zstyle ':vcs_info:*' check-for-changes true
 
 zstyle ':vcs_info:*' stagedstr '%F{green}●%f '
 zstyle ':vcs_info:*' unstagedstr '%F{red}●%f '
-zstyle ':vcs_info:git*' formats '%F{2}%b%F{3} %F{1}%m%u%c'
+zstyle ':vcs_info:git*' formats '%F{2}%b%F{3} %F{1}%u%c'
+zstyle ':vcs_info:git*' actionformats '%F{2}%b%F{3} [%a] %F{1}%u%c'
 
 precmd() { vcs_info }
 
